@@ -1,0 +1,74 @@
+#include "LedControl.h" 
+
+LedControl lc = LedControl(12, 11, 10, 1); 
+
+const int pinA0 = A0; 
+const int pinA1 = A1; 
+const int pinA2 = A2; 
+const int pinA3 = A3; 
+
+const int UMBRAL = 50; 
+
+void setup() { 
+  lc.shutdown(0, false); 
+  lc.setIntensity(0, 5); 
+  lc.clearDisplay(0); 
+  Serial.begin(9600); 
+} 
+
+void loop() { 
+  int valorA0 = analogRead(pinA0); 
+  int valorA1 = analogRead(pinA1); 
+  int valorA2 = analogRead(pinA2); 
+  int valorA3 = analogRead(pinA3); 
+
+  bool t0 = (valorA0 > UMBRAL);
+  bool t1 = (valorA1 > UMBRAL);
+  bool t2 = (valorA2 > UMBRAL);
+  bool t3 = (valorA3 > UMBRAL);
+
+  Serial.print("A0: "); Serial.print(valorA0); 
+  Serial.print(" | A1: "); Serial.print(valorA1); 
+  Serial.print(" | A2: "); Serial.print(valorA2); 
+  Serial.print(" | A3: "); Serial.println(valorA3); 
+
+  lc.clearDisplay(0); 
+
+  if (t0 && t1) {
+    dibujarCuadrado(0, 0); 
+  }
+  else if (t0 && t3) {
+    dibujarCuadrado(0, 4); 
+  }
+  else if (t2 && t1) {
+    dibujarCuadrado(4, 0); 
+  }
+  else if (t2 && t3) {
+    dibujarCuadrado(4, 4); 
+  }
+  else if (t0) { 
+    dibujarCuadrado(0, 2); 
+  } 
+  else if (t1) { 
+    dibujarCuadrado(2, 0); 
+  } 
+  else if (t2) { 
+    dibujarCuadrado(4, 2); 
+  } 
+  else if (t3) { 
+    dibujarCuadrado(2, 4); 
+  } 
+  else {
+    dibujarCuadrado(2, 2); 
+  }
+
+  delay(150); 
+} 
+
+void dibujarCuadrado(int filaInicio, int colInicio) { 
+  for (int f = filaInicio; f < filaInicio + 4; f++) { 
+    for (int c = colInicio; c < colInicio + 4; c++) { 
+      lc.setLed(0, f, c, true); 
+    } 
+  } 
+}
